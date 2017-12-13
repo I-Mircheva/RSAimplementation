@@ -33,8 +33,9 @@ class RSA
       end
 
       keys[1] = e
+
       k = 2
-      # # //choosing d such that it satisfies d*e = 1 + k * totient
+      # # //choosing d such that it satisfies d * e = 1 + k * totient
       d = (1 + (k*totient))/e
       keys[2] = d
 
@@ -42,23 +43,24 @@ class RSA
    end
 
    def encrypt message
-    #Message data - i
-    passed = message.split("").each do |i|
-      (i.ord) = (i.ord)**@e;
-      @m = (i.ord)**@d;
-      (i.ord) %= @n; #Encrypted data
-    end
+    passed = message.split("").map! { |i|
+      c = (i.ord)**@e;
+      i = c % @n;
+    }
     passed.join(",")
-      #encrypts the message passed. The message is of type string. Encrypts each symbol of this string by using its ASCII number representation and returns the encrypted message.
    end
 
    def decrypt message
-    passed = message.split(",").each do |i|
-      (i.to_i) = i.to_i ** @d
-      i %= @n; #Original Message Sent
-    end
+    passed = message.split(",").map! { |i|
+      c = i.to_i ** @d
+      i = c % @n; #Original Message Sent
+      i = i.chr
+    }
     passed.join("")
-      #decrypts the message passed. The message is of type string. Decrypts each symbol of this string by using its ASCII number representationand returns the decrypted message.
    end
 end
 
+pony = RSA.new(224, 11, 23)
+
+p pony.encrypt("The quick brown fox jumps over the lazy dog")
+p pony.decrypt(pony.encrypt("The quick brown fox jumps over the lazy dog"))
