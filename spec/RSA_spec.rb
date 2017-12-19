@@ -21,7 +21,7 @@ describe RSA do
       end
 
       it "Tries if crypt changes message to right numbers" do
-        expect(rsa.encrypt("abc")).to eq([388, 1359, 247])
+        expect(rsa.encrypt("abc")).to eq "388.1359.247"
       end
 
       it "Tries if crypt/decrypt works" do

@@ -1,66 +1,60 @@
+
 require 'prime'
 
 class RSA
-   def initialize n, e, d
-    @n = n.to_i
-    @e = e.to_i
-    @d = d.to_i
-   end
+  def initialize n, e, d
+   @n = n.to_i
+   @e = e.to_i
+   @d = d.to_i
+  end
 
-   def n
+  def n
     @n
-   end
+  end
 
-   def e
+  def e
     @e
-   end
+  end
 
-   def d
+  def d
     @d
-   end
+  end
 
-   def new_key
-      keys = Array.new(3, 1)
-      p = Prime.prime_division(rand(100)).pop[0]
-      q = Prime.prime_division(rand(100)).pop[0]
+  def new_key
+    keys = Array.new(3, 1)
+    p = Prime.prime_division(rand(1000)).pop[0]
+    q = Prime.prime_division(rand(1000)).pop[0]
 
-      n = p*q
-      keys[0] = n
+    n = p*q
+    keys[0] = n
+    totient = (p-1)*(q-1)
 
-      totient = (p-1)*(q-1)
+    while ((e = rand(totient)) && e.gcd(totient) != 1)
+    end
+    keys[1] = e
 
-      while (e = rand(totient)) && e.gcd(totient) != 1
-      end
+    d = keys[2]
 
-      keys[1] = e
+    while ((d * e)%totient != 1 && d = d + 1)
+    end
+    keys[2] = d
 
-      k = 2
-      # # //choosing d such that it satisfies d * e = 1 + k * totient
-      d = (1 + (k*totient))/e
-      keys[2] = d
+    keys
+  end
 
-      keys
-   end
-
-   def encrypt message
+  def encrypt message
     passed = message.split("").map! { |i|
-      c = (i.ord)**@e;
-      i = c % @n;
+      c = (i.ord)**@e
+      i = c % @n
     }
-    passed.join(",")
-   end
+    passed.join(".")
+  end
 
-   def decrypt message
-    passed = message.split(",").map! { |i|
-      c = i.to_i ** @d
-      i = c % @n; #Original Message Sent
-      i = i.chr
+  def decrypt message
+    passed = message.split(".").map! { |i|
+      m = i.to_i ** @d
+      i = (m % @n).chr
     }
     passed.join("")
-   end
+  end
 end
-
-pony = RSA.new(224, 11, 23)
-
-p pony.encrypt("The quick brown fox jumps over the lazy dog")
-p pony.decrypt(pony.encrypt("The quick brown fox jumps over the lazy dog"))
